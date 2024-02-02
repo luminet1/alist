@@ -45,7 +45,7 @@ func SSOLoginRedirect(c *gin.Context) {
 	var r_url string
 	var redirect_uri string
 	if !enabled {
-		common.ErrorStrResp(c, "Single sign-on is not enabled", 403)
+		common.ErrorStrResp(c, "未启用单点登录", 403)
 		return
 	}
 	urlValues := url.Values{}
@@ -142,7 +142,7 @@ func autoRegister(username, userID string, err error) (*model.User, error) {
 		return nil, err
 	}
 	if username == "" {
-		return nil, errors.New("cannot get username from SSO provider")
+		return nil, errors.New("无法从SSO提供程序获取用户名")
 	}
 	user := &model.User{
 		ID:         0,
@@ -155,7 +155,7 @@ func autoRegister(username, userID string, err error) (*model.User, error) {
 		SsoID:      userID,
 	}
 	if err = db.CreateUser(user); err != nil {
-		if strings.HasPrefix(err.Error(), "UNIQUE constraint failed") && strings.HasSuffix(err.Error(), "username") {
+		if strings.HasPrefix(err.Error(), "唯一约束失败") && strings.HasSuffix(err.Error(), "username") {
 			user.Username = user.Username + "_" + userID
 			if err = db.CreateUser(user); err != nil {
 				return nil, err
@@ -170,11 +170,11 @@ func autoRegister(username, userID string, err error) (*model.User, error) {
 func parseJWT(p string) ([]byte, error) {
 	parts := strings.Split(p, ".")
 	if len(parts) < 2 {
-		return nil, fmt.Errorf("oidc: malformed jwt, expected 3 parts got %d", len(parts))
+		return nil, fmt.Errorf("OIDC：格式错误的JWT，预期得到3个部分 %d", len(parts))
 	}
 	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
 	if err != nil {
-		return nil, fmt.Errorf("oidc: malformed jwt payload: %v", err)
+		return nil, fmt.Errorf("OIDC：格式错误的JWT负载: %v", err)
 	}
 	return payload, nil
 }
@@ -204,7 +204,7 @@ func OIDCLoginCallback(c *gin.Context) {
 		return
 	}
 	if !stateVerification {
-		common.ErrorStrResp(c, "incorrect or expired state parameter", 400)
+		common.ErrorStrResp(c, "状态参数错误或过期", 400)
 		return
 	}
 
@@ -215,7 +215,7 @@ func OIDCLoginCallback(c *gin.Context) {
 	}
 	rawIDToken, ok := oauth2Token.Extra("id_token").(string)
 	if !ok {
-		common.ErrorStrResp(c, "no id_token found in oauth2 token", 400)
+		common.ErrorStrResp(c, "在OAuth2内标识中找不到id_内标识", 400)
 		return
 	}
 	verifier := provider.Verifier(&oidc.Config{
@@ -238,7 +238,7 @@ func OIDCLoginCallback(c *gin.Context) {
 	}
 	if argument == "get_sso_id" {
 		if useCompatibility {
-			c.Redirect(302, common.GetApiUrl(c.Request)+"/@manage?sso_id="+userID)
+			c.Redirect(302, common.GetApiUrl(c.Request)+"/manage?sso_id="+userID)
 			return
 		}
 		html := fmt.Sprintf(`<!DOCTYPE html>
@@ -285,7 +285,7 @@ func SSOLoginCallback(c *gin.Context) {
 	enabled := setting.GetBool(conf.SSOLoginEnabled)
 	usecompatibility := setting.GetBool(conf.SSOCompatibilityMode)
 	if !enabled {
-		common.ErrorResp(c, errors.New("sso login is disabled"), 500)
+		common.ErrorResp(c, errors.New("SSO登录已禁用"), 500)
 		return
 	}
 	argument := c.Query("method")
@@ -403,7 +403,7 @@ func SSOLoginCallback(c *gin.Context) {
 	}
 	if argument == "get_sso_id" {
 		if usecompatibility {
-			c.Redirect(302, common.GetApiUrl(c.Request)+"/@manage?sso_id="+userID)
+			c.Redirect(302, common.GetApiUrl(c.Request)+"/manage?sso_id="+userID)
 			return
 		}
 		html := fmt.Sprintf(`<!DOCTYPE html>

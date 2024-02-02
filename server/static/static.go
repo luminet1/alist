@@ -3,12 +3,13 @@ package static
 import (
 	"errors"
 	"fmt"
-	"github.com/alist-org/alist/v3/public"
 	"io"
 	"io/fs"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/alist-org/alist/v3/public"
 
 	"github.com/alist-org/alist/v3/internal/conf"
 	"github.com/alist-org/alist/v3/internal/setting"
@@ -104,7 +105,7 @@ func Static(r *gin.RouterGroup, noRoute func(handlers ...gin.HandlerFunc)) {
 	noRoute(func(c *gin.Context) {
 		c.Header("Content-Type", "text/html")
 		c.Status(200)
-		if strings.HasPrefix(c.Request.URL.Path, "/@manage") {
+		if strings.HasPrefix(c.Request.URL.Path, "/manage") {
 			_, _ = c.Writer.WriteString(conf.ManageHtml)
 		} else {
 			_, _ = c.Writer.WriteString(conf.IndexHtml)
