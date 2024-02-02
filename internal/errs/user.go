@@ -3,8 +3,8 @@ package errs
 import "errors"
 
 var (
-	EmptyUsername      = errors.New("username is empty")
-	EmptyPassword      = errors.New("password is empty")
-	WrongPassword      = errors.New("password is incorrect")
-	DeleteAdminOrGuest = errors.New("cannot delete admin or guest")
+	EmptyUsername      = errors.New("用户名不能为空")
+	EmptyPassword      = errors.New("密码不能为空")
+	WrongPassword      = errors.New("密码不正确")
+	DeleteAdminOrGuest = errors.New("无法删除管理员或游客")
 )

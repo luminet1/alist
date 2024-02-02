@@ -49,7 +49,7 @@ func taskRoute[T tache.TaskWithInfo](g *gin.RouterGroup, manager *tache.Manager[
 		tid := c.Query("tid")
 		task, ok := manager.GetByID(tid)
 		if !ok {
-			common.ErrorStrResp(c, "task not found", 404)
+			common.ErrorStrResp(c, "未找到任务", 404)
 			return
 		}
 		common.SuccessResp(c, getTaskInfo(task))
